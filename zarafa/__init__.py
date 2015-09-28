@@ -1297,7 +1297,7 @@ class Store(object):
     def item(self, entryid):
         """ Return :class:`Item` with given entryid; raise exception of not found """ # XXX better exception?
 
-        item = Item() # XXX copy-pasting..
+        item = Item(parent=self) # XXX copy-pasting..
         item.store = self
         item.server = self.server
         item.mapiobj = _openentry_raw(self.mapiobj, entryid.decode('hex'), MAPI_MODIFY)
@@ -1439,7 +1439,7 @@ class Folder(object):
     def item(self, entryid):
         """ Return :class:`Item` with given entryid; raise exception of not found """ # XXX better exception?
 
-        item = Item() # XXX copy-pasting..
+        item = Item(parent=self) # XXX copy-pasting..
         item.store = self.store
         item.server = self.server
         item.mapiobj = _openentry_raw(self.store.mapiobj, entryid.decode('hex'), MAPI_MODIFY)
@@ -1459,7 +1459,7 @@ class Folder(object):
             if len(rows) == 0:
                 break
             for row in rows:
-                item = Item()
+                item = Item(parent=self)
                 item.store = self.store
                 item.server = self.server
                 item.mapiobj = _openentry_raw(self.store.mapiobj, PpropFindProp(row, PR_ENTRYID).Value, MAPI_MODIFY)
@@ -1692,6 +1692,8 @@ class Item(object):
         self.emlfile = eml
         if isinstance(parent, Folder): 
             self._folder = parent
+        else:
+            self._folder = None
         # XXX
         self._architem = None
 
